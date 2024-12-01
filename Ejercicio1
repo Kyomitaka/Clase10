@@ -1,0 +1,191 @@
+Clase main
+
+package com.mycompany.clase10e1;
+
+import java.util.Scanner;
+
+public class Clase10E1 {
+
+    public static int LeeNumInt(String msg, int min, int max){
+    Scanner sc = new Scanner (System.in);
+    int     valor = 0;
+    String  dato;
+    boolean valido = false;
+    
+    while (!valido){
+        try {
+            System.out.print(msg + " : ");
+            dato   = sc.nextLine();
+            valor  = Integer.parseInt(dato);
+            valido = true;
+            if (valor < min || valor > max) {
+                System.out.println("El numero debe estar entre " + min + " y " + max);
+                valido = false;
+            }
+        }
+        catch (NumberFormatException e){
+            System.out.println("Debe digitar un números");
+            valido = false;
+        }
+    }   // while
+    return valor;
+    }
+    
+    public static boolean LeerSiNo(String msg){
+        int     v;
+        v = LeeNumInt(msg,0,9);
+        return (v == 1);
+    }
+    
+    public static String LeerString(String msg){
+        Scanner sc = new Scanner(System.in);
+        String  valor;
+        System.out.print(msg + " : ");
+        valor = sc.nextLine();
+        return valor;
+    }
+    
+    public static int[] LeerNotas(){
+       // int[] n = {90,75,80,95};
+       int  n[] = new int[4];
+        
+        n[0] = LeeNumInt("Ingrese examen parcial 1",1,100);
+        n[1] = LeeNumInt("Ingrese examen parcial 2",1,100);
+        n[2] = LeeNumInt("Ingrese promedio de practicas",1,100);
+        n[3] = LeeNumInt("Ingrese promedio de laboratorios",1,100);
+        
+        return n;
+    }
+    
+    public static Alumno LeerDatosAlumno(){        
+        Alumno tempo = new Alumno();
+        String  apellido, nombre, carrera, correo;
+        int     notas[] = new int[4];        
+                
+        apellido = LeerString("Ingrese Apellido");
+        nombre   = LeerString("Ingrese Nombre");
+        carrera  = LeerString("Ingrese Carrera");
+        correo   = LeerString("Ingrese Correo");
+        notas    = LeerNotas();
+        
+        tempo.setAlumno(apellido, nombre, carrera, correo, notas);
+        return tempo;
+    }
+    
+    public static void MostrarPromedioAlumnos(Alumno a[], int m){
+        int     i;
+        
+        System.out.println("\nListado de alumnos");
+        for (i = 0; i < m; i++)
+            System.out.printf("%2d %-10s %-10s %6.2f\n",
+                    (i+1), a[i].Apellido, a[i].Nombre, a[i].promedio);
+    }
+    
+    public static double CalcularPromedioAula(Alumno a[], int m){
+        double suma = 0;
+        int    i;
+        
+        for (i = 0; i < m; i++)
+            suma = suma + a[i].promedio;
+        
+        return (suma/m);
+    }
+    
+    public static void MostrarPromedioAula(double p){
+        System.out.println("\nEl promedio del aula es: " + p);
+    }
+
+
+    public static void MostrarAlumnosBajoElPromedio(Alumno a[], double p, int m){
+        int     i;
+        
+        System.out.println("\nAlumnos que están debajo del promedio del aula");
+        for (i = 0; i < m; i++)
+            if (a[i].promedio < p)
+                System.out.printf("%-10s %-10s %6.2f\n",
+                    a[i].Apellido, a[i].Nombre, a[i].promedio);
+    }
+
+    public static void main(String[] args) {
+        Alumno  alumnos[] = new Alumno[10];
+        double  promedio;  // promedio del aula
+        int     i = 0;  
+        boolean continua = true;
+        
+        while (i < 10 && continua){
+            alumnos[i] = new Alumno();
+            alumnos[i] = LeerDatosAlumno();
+            i++;
+            continua = LeerSiNo("¿Continua ingresando datos ('1' para 'SI')?");            
+        } // while
+        //n = i;
+        MostrarPromedioAlumnos(alumnos, i);
+        promedio=CalcularPromedioAula(alumnos, i);
+        MostrarPromedioAula(promedio);
+        MostrarAlumnosBajoElPromedio(alumnos,promedio, i);
+        
+        for (int j = 0; j < i; j++)
+            System.out.println(alumnos[j].getAlumno());
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.mycompany.clase10e1;
+
+public class Alumno {
+    String  Apellido;
+    String  Nombre;
+    String  especialidad;
+    String  correoe;
+    int     notas[] = new int[4]; // Ep1, Ep2, pp, pl
+    double  promedio;             // promedio aritmético de calificaciones
+        
+    public String getApellido(){
+        return Apellido;
+    }
+    
+    public void setApellido(String apellido){
+        Apellido = apellido.toUpperCase();
+    }
+    
+    public String getNombre(){
+        return Nombre;
+    }
+    
+    public void setNombre(String nombre){
+        Nombre = nombre.toUpperCase();
+    }
+    
+    public String getAlumno(){
+        int     i;
+        String  s = "";
+    
+        for (i = 0; i < notas.length; i++)
+            s = s + notas[i] + "  ";
+
+        return  "Apellido: " + Apellido + "\n" +
+                "Nombre: " + Nombre + "\n" +
+                "Especialidad: " + especialidad + "\n" +
+                "Correo Elec. " + correoe + "\n" +
+                "calificaciones: " + s + "\n" +
+                "Promedio: " + promedio + "\n";
+    }
+
+
+    public void setAlumno(String apellido, String nombre, 
+                          String carrera, String correo, int n[]){
+        int     i;
+        double  prom = 0;
+        
+        for (i = 0; i < n.length; i++)
+            prom += n[i];
+        prom = prom / n.length;
+        
+        this.Apellido = apellido.toUpperCase();
+        this.Nombre = nombre.toUpperCase();
+        this.especialidad = carrera;
+        this.correoe = correo;
+        this.notas = n;
+        this.promedio = prom;
+    }
+}
